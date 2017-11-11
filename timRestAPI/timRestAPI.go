@@ -31,16 +31,16 @@ func CreateRestAPI() *TimRestAPI {
 	}
 }
 
-func (timRestAPI *TimRestAPI) api(service_name string, cmd_name string, req_data []byte) string {
-	url_part := []string{"https://console.tim.qq.com/v4/", service_name, "/", cmd_name, "?usersig=",
+func (timRestAPI *TimRestAPI) api(serviceName string, cmdName string, reqData []byte) string {
+	urlPart := []string{"https://console.tim.qq.com/v4/", serviceName, "/", cmdName, "?usersig=",
 		timRestAPI.usersig, "&identifier=", timRestAPI.identifier, "&sdkappid=", strconv.Itoa(timRestAPI.sdkappid),
 		"&random=", strconv.Itoa(int(rand.Int31())), "&contenttype=json"}
-	url := strings.Join(url_part, "")
+	url := strings.Join(urlPart, "")
 
-	body_type := "application/json;charset=utf-8"
+	bodyType := "application/json;charset=utf-8"
 
-	req := bytes.NewBuffer(req_data)
-	resp, _ := http.Post(url, body_type, req)
+	req := bytes.NewBuffer(reqData)
+	resp, _ := http.Post(url, bodyType, req)
 
 	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println(string(body))
@@ -48,75 +48,75 @@ func (timRestAPI *TimRestAPI) api(service_name string, cmd_name string, req_data
 	return string(body)
 }
 
-func (timRestAPI *TimRestAPI) Account_import(identifier, nick, face_url string) {
-	msg := struct{ Identifier, Nick, FaceUrl string }{identifier, nick, face_url}
-	if req_data, err := json.Marshal(msg); err != nil {
+func (timRestAPI *TimRestAPI) AccountImport(identifier, nick, faceUrl string) {
+	msg := struct{ Identifier, Nick, FaceUrl string }{identifier, nick, faceUrl}
+	if reqData, err := json.Marshal(msg); err != nil {
 		fmt.Println(err)
 	} else {
-		timRestAPI.api("im_open_login_svc", "account_import", req_data)
+		timRestAPI.api("im_open_login_svc", "account_import", reqData)
 	}
 }
 
-func (timRestAPI *TimRestAPI) Profile_portrait_set(account_id, new_name string) {
+func (timRestAPI *TimRestAPI) ProfilePortraitSet(accountId, newName string) {
 	msg := struct {
 		From_Account string
 		ProfileItem  []struct{ Tag, Value string }
-	}{account_id, []struct{ Tag, Value string }{{"Tag_Profile_IM_Nick", new_name}}}
+	}{accountId, []struct{ Tag, Value string }{{"Tag_Profile_IM_Nick", newName}}}
 
-	if req_data, err := json.Marshal(msg); err != nil {
+	if reqData, err := json.Marshal(msg); err != nil {
 		fmt.Println(err)
 	} else {
-		timRestAPI.api("profile", "portrait_set", req_data)
+		timRestAPI.api("profile", "portrait_set", reqData)
 	}
 }
 
-func (timRestAPI *TimRestAPI) Group_create_group(group_type, group_name, owner_id string) {
-	msg := struct{ Type, Name, Owner_Account string }{group_type, group_name, owner_id}
-	if req_data, err := json.Marshal(msg); err != nil {
+func (timRestAPI *TimRestAPI) GroupCreateGroup(groupType, groupName, ownerId string) {
+	msg := struct{ Type, Name, Owner_Account string }{groupType, groupName, ownerId}
+	if reqData, err := json.Marshal(msg); err != nil {
 		fmt.Println(err)
 	} else {
-		timRestAPI.api("group_open_http_svc", "create_group", req_data)
+		timRestAPI.api("group_open_http_svc", "create_group", reqData)
 	}
 }
 
-func (timRestAPI *TimRestAPI) Group_add_group_member(group_id, member_id string, silence int) {
+func (timRestAPI *TimRestAPI) GroupAddGroupMember(groupId, memberId string, silence int) {
 	msg := struct {
 		GroupId    string
 		MemberList []struct{ Member_Account string }
 		Silence    int
-	}{group_id, []struct{ Member_Account string }{{member_id}}, silence}
+	}{groupId, []struct{ Member_Account string }{{memberId}}, silence}
 
-	if req_data, err := json.Marshal(msg); err != nil {
+	if reqData, err := json.Marshal(msg); err != nil {
 		fmt.Println(err)
 	} else {
-		timRestAPI.api("group_open_http_svc", "add_group_member", req_data)
+		timRestAPI.api("group_open_http_svc", "add_group_member", reqData)
 	}
 }
 
-func (timRestAPI *TimRestAPI) Group_delete_group_member(group_id, member_id string, silence int) {
+func (timRestAPI *TimRestAPI) GroupDeleteGroupMember(groupId, memberId string, silence int) {
 	msg := struct {
 		GroupId             string
 		MemberToDel_Account []string
 		Silence             int
-	}{group_id, []string{member_id}, silence}
+	}{groupId, []string{memberId}, silence}
 
-	if req_data, err := json.Marshal(msg); err != nil {
+	if reqData, err := json.Marshal(msg); err != nil {
 		fmt.Println(err)
 	} else {
-		timRestAPI.api("group_open_http_svc", "delete_group_member", req_data)
+		timRestAPI.api("group_open_http_svc", "delete_group_member", reqData)
 	}
 }
 
-func (timRestAPI *TimRestAPI) Group_destroy_group(group_id string) {
-	msg := struct{ GroupId string }{group_id}
-	if req_data, err := json.Marshal(msg); err != nil {
+func (timRestAPI *TimRestAPI) GroupDestroyGroup(groupId string) {
+	msg := struct{ GroupId string }{groupId}
+	if reqData, err := json.Marshal(msg); err != nil {
 		fmt.Println(err)
 	} else {
-		timRestAPI.api("group_open_http_svc", "destroy_group", req_data)
+		timRestAPI.api("group_open_http_svc", "destroy_group", reqData)
 	}
 }
 
-func (timRestAPI *TimRestAPI) Group_send_group_msg(account_id, group_id, text_content string) {
+func (timRestAPI *TimRestAPI) GroupSendGroupMsg(accountId, groupId, textContent string) {
 	msg := struct {
 		GroupId      string
 		From_Account string
@@ -125,23 +125,23 @@ func (timRestAPI *TimRestAPI) Group_send_group_msg(account_id, group_id, text_co
 			MsgType    string
 			MsgContent struct{ Text string }
 		}
-	}{group_id, account_id, rand.Int31(), []struct {
+	}{groupId, accountId, rand.Int31(), []struct {
 		MsgType    string
 		MsgContent struct{ Text string }
-	}{{"TIMTextElem", struct{ Text string }{text_content}}}}
+	}{{"TIMTextElem", struct{ Text string }{textContent}}}}
 
-	if req_data, err := json.Marshal(msg); err != nil {
+	if reqData, err := json.Marshal(msg); err != nil {
 		fmt.Println(err)
 	} else {
-		timRestAPI.api("group_open_http_svc", "send_group_msg", req_data)
+		timRestAPI.api("group_open_http_svc", "send_group_msg", reqData)
 	}
 }
 
-func (timRestAPI *TimRestAPI) Group_send_group_system_notification(group_id, text_content string) {
-	msg := struct{ GroupId, Content string }{group_id, text_content}
-	if req_data, err := json.Marshal(msg); err != nil {
+func (timRestAPI *TimRestAPI) GroupSendGroupSystemNotification(groupId, textContent string) {
+	msg := struct{ GroupId, Content string }{groupId, textContent}
+	if reqData, err := json.Marshal(msg); err != nil {
 		fmt.Println(err)
 	} else {
-		timRestAPI.api("group_open_http_svc", "send_group_system_notification", req_data)
+		timRestAPI.api("group_open_http_svc", "send_group_system_notification", reqData)
 	}
 }
