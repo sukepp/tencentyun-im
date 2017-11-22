@@ -145,3 +145,56 @@ func (timRestAPI *TimRestAPI) GroupSendGroupSystemNotification(groupId, textCont
 		timRestAPI.api("group_open_http_svc", "send_group_system_notification", reqData)
 	}
 }
+
+func (timRestAPI *TimRestAPI) GroupGetJoinedGroupList(account_id string) []string {
+	msg := struct{ Member_Account string }{account_id}
+	if reqData, err := json.Marshal(msg); err != nil {
+		fmt.Println(err)
+	} else {
+		ret := timRestAPI.api("group_open_http_svc", "get_joined_group_list", reqData)
+		type GroupRes struct {
+			ActionStatus string
+			ErrorInfo    string
+			ErrorCode    int
+			TotalCount   int
+			GroupIdList  []struct{ GroupId string }
+		}
+		retObj := new(GroupRes)
+		json.Unmarshal([]byte(ret), retObj)
+		if retObj.ActionStatus == "OK" {
+			groupIDs := []string{}
+			for _, groupItem := range retObj.GroupIdList {
+				groupIDs = append(groupIDs, groupItem.GroupId)
+			}
+			return groupIDs
+		}
+	}
+	return nil
+}
+
+func (timRestAPI *TimRestAPI) GroupGetAppidGroupList(limit int) []string {
+	msg := struct{ Limit int }{limit}
+	if reqData, err := json.Marshal(msg); err != nil {
+		fmt.Println(err)
+	} else {
+		ret := timRestAPI.api("group_open_http_svc", "get_appid_group_list", reqData)
+		type GroupRes struct {
+			ActionStatus string
+			ErrorInfo    string
+			ErrorCode    int
+			TotalCount   int
+			GroupIdList  []struct{ GroupId string }
+			Next         int
+		}
+		retObj := new(GroupRes)
+		json.Unmarshal([]byte(ret), retObj)
+		if retObj.ActionStatus == "OK" {
+			groupIDs := []string{}
+			for _, groupItem := range retObj.GroupIdList {
+				groupIDs = append(groupIDs, groupItem.GroupId)
+			}
+			return groupIDs
+		}
+	}
+	return nil
+}
