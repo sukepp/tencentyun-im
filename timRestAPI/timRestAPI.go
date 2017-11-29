@@ -146,8 +146,20 @@ func (timRestAPI *TimRestAPI) GroupSendGroupSystemNotification(groupId, textCont
 	}
 }
 
-func (timRestAPI *TimRestAPI) GroupGetJoinedGroupList(account_id string) []string {
-	msg := struct{ Member_Account string }{account_id}
+type GroupIdList []struct {
+	GroupId string
+	Name    string
+}
+
+func (timRestAPI *TimRestAPI) GroupGetJoinedGroupList(account_id string) GroupIdList {
+	msg := struct {
+		Member_Account string
+		ResponseFilter struct {
+			GroupBaseInfoFilter []string
+		}
+	}{account_id, struct {
+		GroupBaseInfoFilter []string
+	}{[]string{"Name"}}}
 	if reqData, err := json.Marshal(msg); err != nil {
 		fmt.Println(err)
 	} else {
@@ -157,16 +169,20 @@ func (timRestAPI *TimRestAPI) GroupGetJoinedGroupList(account_id string) []strin
 			ErrorInfo    string
 			ErrorCode    int
 			TotalCount   int
-			GroupIdList  []struct{ GroupId string }
+			GroupIdList  []struct {
+				GroupId string
+				Name    string
+			}
 		}
 		retObj := new(GroupRes)
 		json.Unmarshal([]byte(ret), retObj)
 		if retObj.ActionStatus == "OK" {
-			groupIDs := []string{}
-			for _, groupItem := range retObj.GroupIdList {
-				groupIDs = append(groupIDs, groupItem.GroupId)
-			}
-			return groupIDs
+			// groupIDs := []string{}
+			// for _, groupItem := range retObj.GroupIdList {
+			// 	groupIDs = append(groupIDs, groupItem.GroupId)
+			// }
+			// return groupIDs
+			return (GroupIdList)(retObj.GroupIdList)
 		}
 	}
 	return nil
