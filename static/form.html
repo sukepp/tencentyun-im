@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+
+</head>
+<title>
+    Teachers and Students 33Days
+</title>
+<body>
+    <script type="text/javascript" src="/static/sdk/webim.js"></script>
+    <script type="text/javascript" src="/static/sdk/json2.js"></script>
+    <script type="text/javascript" src="/static/js/group/group_manager.js"></script>
+    <script type="text/javascript">
+    </script>
+
+
+    <h2>Teachers and Students 33Days</h2>
+    <form action="/" method="post">
+        UserID To Register: <input type="text" name="RegisterID" />
+        <input type="submit" value="submit" />
+    </form>
+    <br />
+    <form action="/" method="post">
+        UserID To Log In: <input type="text" name="UserID" />
+        <input type="submit" value="submit" />
+    </form>
+    <br />
+    <form action="/" method="post">
+        GroupID To Join: <input type="text" name="JoinGroupID" />
+        <input type="submit" value="submit" />
+    </form>
+    <br />
+    <form action="/" method="post">
+        GroupID To Quit: <input type="text" name="QuitGroupID" />
+        <input type="submit" value="submit" />
+    </form>
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" id="send_group_msg_dialog_label">
+                Group Message:
+            </h4>
+        </div>
+        <form>
+            User ID<input type="text" id="sgm_to_userid"><br/>
+            User Name<input type="text" id="sgm_to_user_name"><br/>
+            Group Name<input type="text" id="sgm_to_group_name"><br/>
+            Group ID<input type="text" id="sgm_to_groupid"><br/>
+            Content<input type="text" id="sgm_content">
+            <!-- <input type="submit" value="submit" /> -->
+            <button type="button" onclick="sendGroupMsg()">提交</button>
+        </form>
+    </div>
+</body>
+</html>
